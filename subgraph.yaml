@@ -1,0 +1,53 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Factory
+    network: xinfin
+    source:
+      address: "0x3Ae0564bb08A31ECfc8c2Eb045b925Ddc8f60C81"
+      abi: Factory
+      startBlock: 66181020
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContractAdded
+        - ContractRemoved
+      abis:
+        - name: Factory
+          file: ./abis/Factory.json
+      eventHandlers:
+        - event: ContractAdded(address)
+          handler: handleContractAdded
+        - event: ContractRemoved(address)
+          handler: handleContractRemoved
+      file: ./src/factory.ts
+templates:
+  - name: NftIndex
+    kind: ethereum/contract
+    network: xinfin
+    source:
+      abi: NftIndex
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/mappings/index.ts
+      entities:
+        - NftIndex
+        - Transfer
+        - Approval
+        - ApprovalForAll
+      abis:
+        - name: NftIndex
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
